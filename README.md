@@ -6,7 +6,7 @@ This is Module 1: a first-order sensor responding to a step or a ramp.
 Move the sliders to change K, τ, and the input amplitude or ramp rate.
 The page shows the response, the error on a log scale, and the lecture checks.
 
-Pages address after publishing: https://ligux01.github.io/Homework-1/
+Live site: https://ligux01.github.io/Homework-1/
 
 ## Run it
 
