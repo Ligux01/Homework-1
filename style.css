@@ -140,3 +140,14 @@ footer b { color: var(--red); margin: 0 8px; }
   footer { flex-direction: column; gap: 6px; font-size: 8px; }
 }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+.module-head { border-top: 2px solid var(--ink); margin-top: 38px; padding: 26px 0 22px; }
+.module-head h2 { font-size: 40px; }
+input[type="number"] { width: 100%; padding: 8px; border: 1px solid #9c9e92; background: transparent; color: var(--ink); }
+.presets { display: flex; gap: 18px; }
+.metrics.four { grid-template-columns: repeat(4, 1fr); }
+.analysis-grid + .equation-note { margin: 26px 0 0; }
+@media (max-width: 700px) {
+  .module-head h2 { font-size: 30px; }
+  .metrics.four { grid-template-columns: repeat(2, 1fr); row-gap: 14px; }
+}

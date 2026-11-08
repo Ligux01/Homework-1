@@ -92,15 +92,134 @@
         <section class="validation" aria-labelledby="validation-title">
           <p class="eyebrow">03 / TRUST, BUT VERIFY</p>
           <h2 id="validation-title">Check the numbers.</h2>
-          <p>Step-response benchmarks, checked in both input modes. Tolerance: ±0.1 percentage points.</p>
-          <table><caption class="sr-only">First-order step validation</caption><thead><tr><th scope="col">STEP CHECK</th><th scope="col">EXPECTED</th><th scope="col">COMPUTED</th><th scope="col">RESULT</th></tr></thead><tbody id="validation-rows"></tbody></table>
+          <p>Six checks from the slides. Check 1 follows the Module 1 sliders in both input modes. Checks 2 to 6 use the fixed values from the assignment.</p>
+          <table><caption class="sr-only">First-order step validation</caption><thead><tr><th scope="col">CHECK</th><th scope="col">EXPECTED</th><th scope="col">COMPUTED</th><th scope="col">RESULT</th></tr></thead><tbody id="validation-rows"></tbody></table>
           <div class="equation-note"><span>THE MATH UNDER THE PLOT</span><p id="response-equation"></p><p id="error-equation"></p><small>t in seconds · K is gain · A is step amplitude · R is ramp rate. Responses assume zero initial output.</small></div>
         </section>
       </div>
 
       <section class="takeaway"><span aria-hidden="true">↳</span><p id="takeaway"></p></section>
+
+      <div class="module-head"><p class="eyebrow">MODULE 02 / FIRST-ORDER FREQUENCY RESPONSE</p><h2>Fast signals arrive smaller and late.</h2></div>
+      <section class="experiment" id="freq-lab" aria-label="First-order frequency response experiment">
+        <aside class="controls">
+          <div class="section-label"><span>SET THE SINE</span><span aria-hidden="true">↘</span></div>
+          <div class="control">
+            <label for="tau2">Time constant <i>τ</i><output id="tau2-value" for="tau2"></output></label>
+            <input id="tau2" type="range" min="0.05" max="2" step="0.05" value="0.2">
+            <div class="range-ends"><span>0.05 s</span><span>2 s</span></div>
+          </div>
+          <div class="control">
+            <label for="w2">Input frequency <i>ω</i><output id="w2-value" for="w2"></output></label>
+            <input id="w2" type="range" min="-1" max="2" step="0.01" value="0.301">
+            <div class="range-ends"><span>0.1 rad/s</span><span>100 rad/s · log scale</span></div>
+          </div>
+          <fieldset>
+            <legend>Dynamic-error calculator</legend>
+            <div class="control"><label for="fmax">Highest signal frequency (Hz)</label><input id="fmax" type="number" value="100" min="1" step="1"></div>
+            <div class="control"><label for="emax">Allowed amplitude error (%)</label><input id="emax" type="number" value="5" min="0.1" max="50" step="0.1"></div>
+            <p class="control-note" id="calc-result" aria-live="polite"></p>
+          </fieldset>
+        </aside>
+        <div class="response-panel">
+          <div class="plot-heading"><h2 id="time2-title">Same wave, smaller and late</h2><span class="live"><span aria-hidden="true">●</span> LIVE RESPONSE</span></div>
+          <div class="legend"><span class="input-line">Input sin ωt</span><span class="output-line">Output M sin(ωt + φ)</span></div>
+          <svg id="time2" viewBox="0 0 760 300" role="img" aria-labelledby="time2-title time2-description"></svg>
+          <p id="time2-description" class="plot-caption"></p>
+          <div class="metrics" aria-live="polite">
+            <div><span>AMPLITUDE RATIO · M</span><strong id="m-ratio"></strong><p>1 / √(1 + (ωτ)²)</p></div>
+            <div><span>PHASE LAG · φ</span><strong id="m-phase"></strong><p>tan⁻¹(ωτ)</p></div>
+            <div><span>DYNAMIC ERROR · δ</span><strong id="m-delta"></strong><p>δ = M − 1</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="prediction" aria-labelledby="p2-title">
+        <div class="prediction-intro"><p class="eyebrow">BEFORE YOU MOVE THE SLIDER</p><h2 id="p2-title">Predict, then check.</h2></div>
+        <form id="p2-form">
+          <label for="p2-guess">The input frequency rises from ω = 1/τ to ω = 10/τ. What happens to the amplitude ratio?</label>
+          <div class="prediction-inputs"><select id="p2-guess" required><option value="">Make a prediction…</option><option value="same">It stays near 0.71</option><option value="half">It drops to about 0.5</option><option value="tenth">It drops to about 0.1</option></select><button type="submit">Check my thinking <span aria-hidden="true">↗</span></button></div>
+          <p id="p2-result" role="status">Choose an answer, then check it. Set ω to 1/τ, then to 10/τ.</p>
+        </form>
+      </section>
+
+      <div class="analysis-grid">
+        <section aria-labelledby="bode-title">
+          <p class="eyebrow">BODE PLOT / MAGNITUDE</p>
+          <h2 id="bode-title">Where the cutoff sits.</h2>
+          <svg id="bode-mag" viewBox="0 0 600 250" role="img" aria-label="Bode magnitude plot"></svg>
+          <p class="plot-caption" id="bode-note"></p>
+        </section>
+        <section aria-labelledby="phase-title">
+          <p class="eyebrow">BODE PLOT / PHASE</p>
+          <h2 id="phase-title">How late it gets.</h2>
+          <svg id="bode-phase" viewBox="0 0 600 250" role="img" aria-label="Bode phase plot"></svg>
+          <p class="plot-caption">The phase lag heads toward −90° and passes −45° at the cutoff. The dot marks your current ω.</p>
+        </section>
+      </div>
+
+      <div class="module-head"><p class="eyebrow">MODULE 03 / SECOND-ORDER RESPONSE</p><h2>Mass, spring, damper: ring or creep.</h2></div>
+      <section class="experiment" id="second-lab" aria-label="Second-order response experiment">
+        <aside class="controls">
+          <div class="section-label"><span>BUILD THE SYSTEM</span><span aria-hidden="true">↘</span></div>
+          <fieldset>
+            <legend>Presets (m = 1, k = 4)</legend>
+            <div class="presets"><button class="reset" type="button" data-b="2">Under</button><button class="reset" type="button" data-b="4">Critical</button><button class="reset" type="button" data-b="8">Over</button></div>
+          </fieldset>
+          <div class="control">
+            <label for="mass">Mass <i>m</i><output id="mass-value" for="mass"></output></label>
+            <input id="mass" type="range" min="0.5" max="5" step="0.1" value="1">
+          </div>
+          <div class="control">
+            <label for="damp">Damping <i>b</i><output id="damp-value" for="damp"></output></label>
+            <input id="damp" type="range" min="0.5" max="20" step="0.1" value="2">
+          </div>
+          <div class="control">
+            <label for="spring">Stiffness <i>k</i><output id="spring-value" for="spring"></output></label>
+            <input id="spring" type="range" min="1" max="20" step="0.1" value="4">
+          </div>
+          <p class="control-note" id="zw" aria-live="polite"></p>
+        </aside>
+        <div class="response-panel">
+          <div class="plot-heading"><h2 id="step2-title">Response to a unit force step</h2><span class="live"><span aria-hidden="true">●</span> LIVE RESPONSE</span></div>
+          <div class="legend"><span class="ideal-line">Final value F/k</span><span class="output-line">Displacement x(t)</span></div>
+          <svg id="step2" viewBox="0 0 760 370" role="img" aria-labelledby="step2-title step2-description"></svg>
+          <p id="step2-description" class="plot-caption"></p>
+          <div class="metrics four" aria-live="polite">
+            <div><span>OVERSHOOT</span><strong id="m-os"></strong><p>e^(−πζ/√(1−ζ²))</p></div>
+            <div><span>RISE TIME · 10–90%</span><strong id="m-tr"></strong><p>read off the curve</p></div>
+            <div><span>PEAK TIME</span><strong id="m-tp"></strong><p>π / ωd when underdamped</p></div>
+            <div><span>SETTLING · 2%</span><strong id="m-ts"></strong><p>last exit from the band</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="prediction" aria-labelledby="p3-title">
+        <div class="prediction-intro"><p class="eyebrow">BEFORE YOU MOVE THE SLIDER</p><h2 id="p3-title">Predict, then check.</h2></div>
+        <form id="p3-form">
+          <label for="p3-guess">You raise the damping b while m and k stay fixed. What happens to the overshoot?</label>
+          <div class="prediction-inputs"><select id="p3-guess" required><option value="">Make a prediction…</option><option value="more">It grows</option><option value="less">It shrinks</option><option value="same">It stays the same</option></select><button type="submit">Check my thinking <span aria-hidden="true">↗</span></button></div>
+          <p id="p3-result" role="status">Choose an answer, then check it. Drag b, or try the three presets.</p>
+        </form>
+      </section>
+
+      <div class="analysis-grid">
+        <section aria-labelledby="pole-title">
+          <p class="eyebrow">POLES / s-PLANE</p>
+          <h2 id="pole-title">Where the roots sit.</h2>
+          <svg id="pole-plot" viewBox="0 0 600 270" role="img" aria-label="Pole locations in the s-plane"></svg>
+          <p class="plot-caption" id="pole-note"></p>
+        </section>
+        <section aria-labelledby="phaseplane-title">
+          <p class="eyebrow">PHASE PLANE</p>
+          <h2 id="phaseplane-title">The path of (x₁, x₂).</h2>
+          <svg id="phase-plot" viewBox="0 0 600 270" role="img" aria-label="Phase plane of displacement against velocity"></svg>
+          <p class="plot-caption" id="phase-note"></p>
+        </section>
+      </div>
+      <div class="equation-note"><span>STATE-SPACE FORM · ẋ = Ax + Bu</span><p id="ss-text"></p><small>x₁ = displacement, x₂ = velocity, u = force. The eigenvalues of A are the poles of G(s).</small></div>
     </main>
-    <footer><span>THE SENSOR LAB <b>/</b> INTERFACING TECHNIQUES</span><span>MODULE 01 · CHECKPOINT 1 · 03 NOV 2026</span></footer>
+    <footer><span>THE SENSOR LAB <b>/</b> INTERFACING TECHNIQUES</span><span>MODULES 01–03 · CHECKPOINT 2 · 09 NOV 2026</span></footer>
   </div>
 </body>
 </html>
