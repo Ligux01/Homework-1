@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="An interactive first-order sensor lab. Explore step response, ramp lag, and the meaning of the time constant.">
-  <title>First Order — A Sensor Lab</title>
+  <meta name="description" content="Explore first-order and second-order sensor responses, frequency response, state-space models, and the Guess the Sensor challenge.">
+  <title>The Sensor Lab — Dynamic Characteristics</title>
   <link rel="stylesheet" href="style.css">
   <script src="script.js" defer></script>
 </head>
@@ -218,8 +218,70 @@
         </section>
       </div>
       <div class="equation-note"><span>STATE-SPACE FORM · ẋ = Ax + Bu</span><p id="ss-text"></p><small>x₁ = displacement, x₂ = velocity, u = force. The eigenvalues of A are the poles of G(s).</small></div>
+
+      <!-- Module 4: Guess the sensor -->
+      <div class="module-head">
+        <p class="eyebrow">MODULE 04 / GUESS THE SENSOR</p>
+        <h2 id="challenge-title">Read the curve. Find the sensor.</h2>
+      </div>
+      <section class="experiment" id="challenge-lab" aria-labelledby="challenge-title">
+        <aside class="controls">
+          <div class="section-label"><span>PREDICT, THEN CHECK</span><span aria-hidden="true">↘</span></div>
+          <p id="challenge-task" class="control-note">Estimate the hidden sensor's parameters from its noisy response. The input signal and its units will be stated for each round.</p>
+          <form id="challenge-form" aria-describedby="challenge-task challenge-scoring">
+            <fieldset id="challenge-first">
+              <legend>Your first-order estimates</legend>
+              <div class="control">
+                <label for="challenge-k">Sensor gain <i>K</i></label>
+                <input id="challenge-k" name="gain" type="number" min="0.000001" step="any" inputmode="decimal" required>
+              </div>
+              <div class="control">
+                <label for="challenge-tau">Time constant <i>τ</i> (s)</label>
+                <input id="challenge-tau" name="tau" type="number" min="0.000001" step="any" inputmode="decimal" required>
+              </div>
+            </fieldset>
+            <fieldset id="challenge-second" hidden disabled>
+              <legend>Your second-order estimates</legend>
+              <div class="control">
+                <label for="challenge-zeta">Damping ratio <i>ζ</i></label>
+                <input id="challenge-zeta" name="zeta" type="number" min="0.000001" step="any" inputmode="decimal" required>
+              </div>
+              <div class="control">
+                <label for="challenge-wn">Natural frequency <i>ωn</i> (rad/s)</label>
+                <input id="challenge-wn" name="wn" type="number" min="0.000001" step="any" inputmode="decimal" required>
+              </div>
+            </fieldset>
+            <div class="prediction-inputs">
+              <button class="reset" id="challenge-check" type="submit">Check &amp; reveal</button>
+              <button class="reset" id="challenge-hint-button" type="button" aria-controls="challenge-hint" aria-expanded="false">Show hint</button>
+            </div>
+            <p id="challenge-hint" class="control-note" role="status" hidden></p>
+            <p id="challenge-scoring" class="control-note">Earn full marks when every requested parameter is within 10% of its true value. Each round counts once; your session total carries over to the next sensor.</p>
+          </form>
+          <button class="reset" id="challenge-new" type="button">↺ New sensor</button>
+        </aside>
+
+        <div class="response-panel">
+          <div class="plot-heading"><h2 id="challenge-plot-title">The mystery response</h2></div>
+          <div class="legend" aria-label="Challenge plot legend">
+            <span class="input-line">Noisy measurement</span>
+            <span class="challenge-input-line" id="challenge-input-key" hidden>Known input x(t)</span>
+            <span class="output-line" id="challenge-guess-key" hidden>Your estimated response</span>
+            <span class="ideal-line" id="challenge-true-key" hidden>True response</span>
+          </div>
+          <svg id="challenge-plot" viewBox="0 0 760 370" role="img" aria-labelledby="challenge-plot-title" aria-describedby="challenge-description"></svg>
+          <p id="challenge-description" class="plot-caption">Read the time and signal axes before guessing. After you check, compare your estimated response with the true curve.</p>
+          <p id="challenge-result" class="plot-caption" role="status" aria-atomic="true">The true parameter values stay hidden until you submit your estimates.</p>
+          <div id="challenge-comparison" hidden></div>
+          <div class="metrics" aria-label="Challenge session scores" aria-live="polite" aria-atomic="true">
+            <div><span>LAST ROUND</span><strong id="challenge-last">—</strong><p>score for your most recent guess</p></div>
+            <div><span>SESSION TOTAL</span><strong id="challenge-score">0</strong><p>points earned across scored rounds</p></div>
+            <div><span>ROUNDS SCORED</span><strong id="challenge-rounds">0</strong><p>one scored guess per sensor</p></div>
+          </div>
+        </div>
+      </section>
     </main>
-    <footer><span>THE SENSOR LAB <b>/</b> INTERFACING TECHNIQUES</span><span>MODULES 01–03 · CHECKPOINT 2 · 09 NOV 2026</span></footer>
+    <footer><span>THE SENSOR LAB <b>/</b> INTERFACING TECHNIQUES</span><span>MODULES 01–04 · ENCS4380 HOMEWORK 1</span></footer>
   </div>
 </body>
 </html>

@@ -4,16 +4,16 @@ ENCS4380 Interfacing Techniques, Birzeit University. Homework 1, Dr. Wasel Ghane
 
 A sensor never reports the present. It reports the past, smoothed. This site lets you move the sliders and watch how far behind a sensor gets, and why.
 
-**Live site:** https://ligux01.github.io/Homework-1/ <!-- TODO: confirm this is your GitHub Pages link -->
+**Live site:** https://ligux01.github.io/Homework-1/
 
 ## Team
 
-| Member | Module |
-|---|---|
-| TODO name | Module 1, first-order time response |
-| TODO name | Module 2, first-order frequency response |
-| TODO name | Module 3, second-order response |
-| TODO name | Module 4, "Guess the sensor" (due for v1.0) |
+| Member | Student ID | Module |
+|---|---:|---|
+| Yazan Salhi | 1231057 | Module 1, first-order time response |
+| Ahmad Hamad | 1230618 | Module 2, first-order frequency response |
+| Mohammad Shtayeh | 1231028 | Module 3, second-order response and state-space panel |
+| Mohammad Samer | 1232550 | Module 4, "Guess the sensor" challenge |
 
 Each module has its own GitHub Issue, assigned to its owner.
 
@@ -25,9 +25,9 @@ Each module has its own GitHub Issue, assigned to its owner.
 
 **Module 3, second-order response.** A mass-spring-damper with m, b and k sliders, plus Under, Critical and Over presets. Overshoot, rise time, peak time and settling time are read off the curve. The poles are drawn on the s-plane. A state-space panel shows A and B updating live, the eigenvalues of A next to the poles of G(s), and the (x₁, x₂) phase-plane path.
 
-**Module 4, "Guess the sensor".** Not part of checkpoint 2. It lands in the v1.0 release.
+**Module 4, "Guess the sensor".** Each round creates a hidden random first-order or underdamped second-order sensor and adds small measurement noise. The user estimates K and τ, or ζ and ωn, from a step or sine response. The page then reveals the true values, overlays the estimated and true curves, reports each parameter error and scores the round. A hint button explains the appropriate estimation method, and the session score carries across new sensors.
 
-Modules 1 to 3 each have a "Predict, then check" box: make a guess first, then test it with the sliders.
+Modules 1 to 3 each have a "Predict, then check" box: make a guess first, then test it with the sliders. Module 4 applies the same idea as a scored inverse problem.
 
 ## Validation checks
 
@@ -51,6 +51,7 @@ The page shows each check with the expected value, our value and pass or fail.
 ![Module 3, poles and phase plane](screenshots/05-module3-poles-phase-plane.png)
 ![Validation checks](screenshots/06-validation-checks.png)
 ![Phone view](screenshots/07-phone-view.png)
+![Module 4, Guess the Sensor](screenshots/08-module4-guess-the-sensor.png)
 
 ## How it is built
 
@@ -64,4 +65,4 @@ To run it locally, open `index.html` in a browser.
 
 ## AI use
 
-We used Claude (Anthropic) to write the code for Modules 2 and 3 and this README, and to explain the JavaScript to us. <!-- TODO: edit so it matches what your group really did, including checkpoint 1 -->
+We used Claude (Anthropic) for implementation support on Modules 2 and 3, the original README, and explanations of the JavaScript. We used ChatGPT/Codex (OpenAI) to help integrate and test Module 4, review the scoring and plotting logic, and explain the resulting code. The team reviewed the formulas, interactions and code and must be able to explain them during the demo.

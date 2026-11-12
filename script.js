@@ -356,3 +356,172 @@ document.querySelectorAll('[data-b]').forEach(button => button.addEventListener(
 }));
 update2();
 update3();
+
+// ================= Module 4: Guess the sensor =================
+// All state is private to this function. The answer is revealed only after a guess.
+(function sensorChallenge() {
+  if (!byId('challenge-lab')) return;
+  const el = name => byId('challenge-' + name);
+  const randomBetween = (low, high) => low + Math.random() * (high - low);
+  let round, total = 0, completed = 0;
+
+  // A sinusoidal trial shows the steady-state response, just like Module 2.
+  function response(sensor, t) {
+    if (sensor.order === 2) return secondOrder(t, 1, 1, sensor.zeta, sensor.wn);
+    if (sensor.signal === 'step') return stepResponse(t, sensor.k, 1, sensor.tau);
+    const u = sensor.omega * sensor.tau;
+    return sensor.k / Math.sqrt(1 + u * u) * Math.sin(sensor.omega * t - Math.atan(u));
+  }
+
+  function draw() {
+    const samples = round.samples;
+    const values = samples.map(point => point[1]);
+    // Keep the same recorded measurements when resizing or revealing an answer.
+    for (let i = 0; i <= 480; i++) {
+      const t = round.end * i / 480;
+      if (round.sensor.signal === 'sine') values.push(Math.sin(round.sensor.omega * t));
+      if (round.guess) values.push(response(round.guess, t), response(round.sensor, t));
+    }
+    const lo = Math.min(0, ...values), hi = Math.max(0.1, ...values);
+    const margin = (hi - lo) * 0.12;
+    const min = lo - margin, max = hi + margin;
+    const ticks = Array.from({length: 5}, (_, i) => {
+      const value = min + (max - min) * i / 4;
+      return {value, label: fixed(value, 2)};
+    });
+    const narrow = window.innerWidth <= 700;
+    const plot = makePlot('challenge-plot', narrow ? 480 : 760, 370,
+      round.end, min, max, ticks, 'signal / units');
+    if (round.sensor.signal === 'sine') {
+      const points = Array.from({length: 481}, (_, i) => {
+        const t = round.end * i / 480;
+        return `${plot.x(t)},${plot.y(Math.sin(round.sensor.omega * t))}`;
+      }).join(' ');
+      add(plot.svg, 'polyline', {points, style: 'fill:none;stroke:var(--ink);stroke-width:1.5;stroke-dasharray:10 4'});
+    }
+    samples.forEach(([t, y]) => {
+      const dot = add(plot.svg, 'circle', {
+        cx: plot.x(t), cy: plot.y(y), r: narrow ? 1.8 : 2,
+        style: 'fill:var(--muted);opacity:0.65'
+      });
+      add(dot, 'title', {}, `t = ${fixed(t, 3)} s; y = ${fixed(y, 3)}`);
+    });
+    if (round.guess) {
+      curve(plot, round.end, t => response(round.guess, t), 'curve');
+      curve(plot, round.end, t => response(round.sensor, t), 'reference');
+    }
+  }
+
+  function newSensor() {
+    const first = Math.random() < 0.5;
+    const sensor = first
+      ? {order: 1, signal: Math.random() < 0.4 ? 'sine' : 'step',
+         k: randomBetween(0.6, 2.5), tau: randomBetween(0.4, 4), omega: randomBetween(0.4, 1.2)}
+      : {order: 2, signal: 'step', zeta: randomBetween(0.2, 0.7), wn: randomBetween(1, 5)};
+    // Coarse time windows keep the curve readable without revealing an exact parameter.
+    const usefulWindow = first ? 6 * sensor.tau
+      : Math.max(4 / (sensor.zeta * sensor.wn), 3 * Math.PI / (sensor.wn * Math.sqrt(1 - sensor.zeta ** 2)));
+    const end = sensor.signal === 'sine' ? 6 * Math.PI / sensor.omega
+      : [4, 8, 12, 16, 24, 32].find(limit => limit >= usefulWindow) || 32;
+    const amplitude = first ? (sensor.signal === 'sine'
+      ? sensor.k / Math.sqrt(1 + (sensor.omega * sensor.tau) ** 2) : sensor.k) : 1;
+    round = {sensor, end, guess: null, scored: false, samples: []};
+    // Bounded noise: at most 1.2% of the response amplitude, sampled once per round.
+    for (let i = 0; i <= 480; i++) {
+      const t = end * i / 480;
+      round.samples.push([t, response(sensor, t) + randomBetween(-0.012, 0.012) * amplitude]);
+    }
+    el('form').reset();
+    el('first').hidden = !first;
+    el('first').disabled = !first;
+    el('second').hidden = first;
+    el('second').disabled = first;
+    el('check').disabled = false;
+    el('check').textContent = 'Check & reveal';
+    el('hint').hidden = true;
+    el('hint-button').setAttribute('aria-expanded', 'false');
+    el('hint-button').textContent = 'Show hint';
+    el('comparison').hidden = true;
+    el('comparison').replaceChildren();
+    el('guess-key').hidden = true;
+    el('true-key').hidden = true;
+    el('input-key').hidden = sensor.signal !== 'sine';
+    el('task').textContent = first
+      ? 'First-order sensor. Estimate the gain K and time constant τ from the noisy curve.'
+      : 'Underdamped second-order sensor. Estimate ζ and ωn. Gain K = 1 is known.';
+    el('description').textContent = sensor.signal === 'sine'
+      ? `Known input: x(t) = sin(ωt), amplitude 1, ω = ${sensor.omega.toPrecision(6)} rad/s. Three periods of steady-state output are shown; use both amplitude and phase lag.`
+      : 'Known input: a unit step at t = 0, with zero initial output. Dots are noisy measurements; the horizontal axis is time in seconds.';
+    el('result').textContent = 'Predict, then check: enter both estimates before revealing the answer.';
+    el('score').textContent = `${total} / ${completed * 100}`;
+    el('rounds').textContent = String(completed);
+    el('scoring').textContent = 'Each parameter within 10% earns full credit. Round score uses the larger relative error: 100 points within 10%, then decreases linearly to 0 at 100% error. One scored guess per sensor; New sensor keeps your total. Refresh starts a new session.';
+    draw();
+  }
+
+  function hint() {
+    const sensor = round.sensor;
+    let message;
+    if (sensor.order === 2) {
+      message = 'Estimate the overshoot fraction Mp = (peak − final)/final and first peak time tp. Then ζ = −ln(Mp)/√(π² + ln(Mp)²), and ωn = π/(tp√(1 − ζ²)). Here the final value is 1. Ignore individual noisy spikes.';
+    } else if (sensor.signal === 'sine') {
+      message = 'Measure the output delay Δt relative to the known input. The lag is φ = ωΔt in radians, so τ = tan(φ)/ω. Then K = (output amplitude/input amplitude) × √(1 + (ωτ)²). Use matching peaks across several periods.';
+    } else {
+      message = 'For a unit step, K is the final output. τ is the time to reach 63.2% of that value. Alternatively ln((K − y)/K) has slope −1/τ. Estimate the smooth trend, not a single noisy dot.';
+    }
+    el('hint').textContent = message;
+    el('hint').hidden = !el('hint').hidden;
+    el('hint-button').setAttribute('aria-expanded', String(!el('hint').hidden));
+    el('hint-button').textContent = el('hint').hidden ? 'Show hint' : 'Hide hint';
+  }
+
+  function check(event) {
+    event.preventDefault();
+    if (round.scored || !el('form').reportValidity()) return;
+    const fields = round.sensor.order === 1
+      ? [['k', 'K'], ['tau', 'τ (s)']]
+      : [['zeta', 'ζ'], ['wn', 'ωn (rad/s)']];
+    const guess = {...round.sensor};
+    for (const [key] of fields) {
+      const value = Number(el(key).value);
+      if (!Number.isFinite(value) || value < 0.000001 || value > 1000) {
+        el('result').textContent = 'Enter finite positive estimates between 0.000001 and 1000.';
+        el(key).focus();
+        return;
+      }
+      guess[key] = value;
+    }
+    const errors = fields.map(([key]) => Math.abs(guess[key] - round.sensor[key]) / round.sensor[key]);
+    const worst = Math.max(...errors);
+    // Avoid awarding 100 through rounding when any parameter is outside tolerance.
+    const score = worst <= 0.1 + 1e-12 ? 100
+      : Math.max(0, Math.min(99, Math.floor(100 * (1 - (worst - 0.1) / 0.9))));
+    round.guess = guess;
+    round.scored = true;
+    total += score;
+    completed++;
+    el('last').textContent = `${score} / 100`;
+    el('score').textContent = `${total} / ${completed * 100}`;
+    el('rounds').textContent = String(completed);
+    el('result').textContent = score === 100
+      ? 'Full marks! Both estimates are within 10%. Compare the curves below and try a new sensor.'
+      : `You earned ${score}/100. Compare the parameter errors and the revealed curves, then try a new sensor.`;
+    el('comparison').innerHTML = '<table><caption>Parameter comparison</caption><thead><tr><th scope="col">Parameter</th><th scope="col">Your guess</th><th scope="col">True value</th><th scope="col">Error</th></tr></thead><tbody>'
+      + fields.map(([key, label], i) => `<tr><th scope="row">${label}</th><td>${guess[key].toPrecision(4)}</td><td>${round.sensor[key].toPrecision(4)}</td><td class="${errors[i] <= 0.1 + 1e-12 ? 'pass' : 'fail'}">${fixed(errors[i] * 100, 2)}%</td></tr>`).join('') + '</tbody></table>';
+    el('comparison').style.overflowX = 'auto';
+    el('comparison').hidden = false;
+    el('guess-key').hidden = false;
+    el('true-key').hidden = false;
+    el('check').disabled = true;
+    el('check').textContent = 'Round scored';
+    el('first').disabled = true;
+    el('second').disabled = true;
+    draw();
+  }
+
+  el('form').addEventListener('submit', check);
+  el('new').addEventListener('click', newSensor);
+  el('hint-button').addEventListener('click', hint);
+  window.addEventListener('resize', draw);
+  newSensor();
+})();
