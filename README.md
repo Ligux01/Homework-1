@@ -73,8 +73,12 @@ Open **Control · HW2** from the landing page. P1 compares first- and second-ord
 
 | Module | Owner |
 |---|---|
-| P1 PID playground | Pending team assignment |
-| P2 Slow sensor | Pending team assignment |
+| P1 PID playground | Yazan Salhi |
+| P2 Slow sensor | Ahmad Hamad |
+| P3 Digital PID | Mohammad Samer |
+| P4 Tuning challenge | Mohammad Shtayeh |
+
+All four team members contributed to P1 and P2.
 
 At the P1 defaults (K = 1, tau = 1 s, Kp = 9, Ki = Kd = 0), the output approaches 0.9 with a 0.1 s time constant. Raise P2 sensor lag from 0.05 s to 1 s to see oscillation at its default gains.
 
