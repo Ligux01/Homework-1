@@ -6,7 +6,9 @@
   <meta name="description" content="Explore first-order and second-order sensor responses, frequency response, state-space models, and the Guess the Sensor challenge.">
   <title>The Sensor Lab — Dynamic Characteristics</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="control.css">
   <script src="script.js" defer></script>
+  <script src="control.js" defer></script>
 </head>
 <body>
   <a class="skip" href="#experiment">Skip to experiment</a>
@@ -14,6 +16,7 @@
     <header class="masthead">
       <a class="brand" href="#top"><span class="brand-mark" aria-hidden="true">↗</span> THE SENSOR LAB</a>
       <span class="course">BIRZEIT UNIVERSITY / ENCS4380</span>
+      <a href="#control">Control · HW2</a>
       <span class="edition">FIELD NOTE <b>01</b></span>
     </header>
 
@@ -280,6 +283,49 @@
           </div>
         </div>
       </section>
+    <section class="pid-section" id="control" aria-labelledby="control-title">
+  <h2 id="control-title">Control / PID Toolkit</h2>
+  <div class="pid-loop" aria-label="Negative feedback block diagram">
+    <div>Setpoint r → Σ → PID → Limiter → Plant → Output y</div>
+    <div>Σ (−) ← Measured output ← Sensor ← Output y</div>
+  </div>
+  <p>P1 uses an ideal sensor. P2 puts a first-order sensor in the feedback path. Euler integration uses a 1 ms step. The D term uses the change in measured output to avoid a kick at the setpoint step.</p>
+  <section id="p1" data-pid="p1" aria-labelledby="p1-title">
+    <h3 id="p1-title">P1 · PID playground</h3>
+    <div class="experiment">
+      <aside class="controls">
+        <div class="control"><label for="p1-order">Plant model</label><select id="p1-order"><option value="1">First order · K = 1, τ = 1 s</option><option value="2">Second order · m = 1, b = 2, k = 4</option></select></div>
+        <div class="pid-sliders"></div>
+        <label for="p1-prediction"><strong>Predict, then check</strong><br>With Kp = 9 and I and D off, how close will the first-order plant get to 1?</label>
+        <textarea id="p1-prediction" rows="3" placeholder="Write your prediction, then move the sliders."></textarea>
+      </aside>
+      <div class="response-panel">
+        <div class="legend"><span class="input-line">Setpoint</span><span class="output-line">Plant output</span></div>
+        <svg id="p1-response" role="img" aria-label="P1 · PID playground response plot"></svg>
+        <svg id="p1-control" role="img" aria-label="Control signal and upper and lower limits"></svg>
+        <div class="metrics four pid-metrics"><div>Rise (10–90%)<strong><output></output></strong></div><div>Overshoot<strong><output></output></strong></div><div>Settling (±2%)<strong><output></output></strong></div><div>Error at end<strong><output></output></strong></div></div>
+      </div>
+    </div>
+  </section>
+  <section id="p2" data-pid="p2" aria-labelledby="p2-title">
+    <h3 id="p2-title">P2 · A slow sensor in the loop</h3>
+    <div class="experiment">
+      <aside class="controls">
+        <p class="control-note">First-order plant, K = 1 and τ = 1 s. Start with τs = 0.05 s, then try 1 s at the default gains.</p>
+        <div class="pid-sliders"></div>
+        <label for="p2-prediction"><strong>Predict, then check</strong><br>What happens to overshoot when the controller acts on a slower sensor reading?</label>
+        <textarea id="p2-prediction" rows="3" placeholder="Write your prediction, then move the sliders."></textarea>
+      </aside>
+      <div class="response-panel">
+        <div class="legend"><span class="input-line">Setpoint</span><span class="output-line">True output</span><span class="ideal-line">Sensor reading</span></div>
+        <svg id="p2-response" role="img" aria-label="P2 · A slow sensor in the loop response plot"></svg>
+        <svg id="p2-ideal" role="img" aria-label="Reference response with an ideal sensor and identical gains"></svg>
+        <div class="metrics four pid-metrics"><div>Rise (10–90%)<strong><output></output></strong></div><div>Overshoot<strong><output></output></strong></div><div>Settling (±2%)<strong><output></output></strong></div><div>Error at end<strong><output></output></strong></div></div>
+      </div>
+    </div>
+  </section>
+</section>
+
     </main>
     <footer><span>THE SENSOR LAB <b>/</b> INTERFACING TECHNIQUES</span><span>MODULES 01–04 · ENCS4380 HOMEWORK 1</span></footer>
   </div>

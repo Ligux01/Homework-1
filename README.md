@@ -66,3 +66,16 @@ To run it locally, open `index.html` in a browser.
 ## AI use
 
 We used Claude (Anthropic) for implementation support on Modules 2 and 3, the original README, and explanations of the JavaScript. We used ChatGPT/Codex (OpenAI) to help integrate and test Module 4, review the scoring and plotting logic, and explain the resulting code. The team reviewed the formulas, interactions and code and must be able to explain them during the demo.
+
+## Homework 2 checkpoint
+
+Open **Control · HW2** from the landing page. P1 compares first- and second-order plants under PID control and plots the saturated command. P2 shows true output and a delayed sensor reading, then compares with an ideal sensor at the same gains. Both use explicit Euler integration with a 1 ms time step. D acts on the measured output. Metrics use the target as the reference and the displayed simulation window.
+
+| Module | Owner |
+|---|---|
+| P1 PID playground | Pending team assignment |
+| P2 Slow sensor | Pending team assignment |
+
+At the P1 defaults (K = 1, tau = 1 s, Kp = 9, Ki = Kd = 0), the output approaches 0.9 with a 0.1 s time constant. Raise P2 sensor lag from 0.05 s to 1 s to see oscillation at its default gains.
+
+AI use for HW2: ChatGPT/Codex helped implement, integrate and numerically check the checkpoint simulations and plots.

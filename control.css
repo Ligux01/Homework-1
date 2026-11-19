@@ -1,0 +1,8 @@
+.pid-section { margin: 44px 0; }
+.pid-section h3 { margin-top: 32px; }
+.pid-loop { display: grid; gap: .4rem; font-family: Consolas, monospace; border-left: 3px solid var(--green); padding: .75rem 1rem; }
+.pid-section textarea, .pid-section select { width: 100%; font: inherit; margin-top: .5rem; }
+.pid-metrics strong { font-size: 1.3rem; }
+svg .pid-target { fill: none; stroke: var(--muted); stroke-width: 2; stroke-dasharray: 5 5; }
+svg .pid-output { fill: none; stroke: var(--red); stroke-width: 3; }
+svg .pid-measured { fill: none; stroke: var(--green); stroke-width: 2; stroke-dasharray: 8 5; }
