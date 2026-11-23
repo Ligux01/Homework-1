@@ -6,3 +6,12 @@
 svg .pid-target { fill: none; stroke: var(--muted); stroke-width: 2; stroke-dasharray: 5 5; }
 svg .pid-output { fill: none; stroke: var(--red); stroke-width: 3; }
 svg .pid-measured { fill: none; stroke: var(--green); stroke-width: 2; stroke-dasharray: 8 5; }
+.pid-toggle input { margin: 0 .5rem 0 0; }
+.pid-section #p3 .response-panel, .pid-section #p4 .response-panel { padding-bottom: 1rem; }
+.pid-code { min-width: 0; margin-top: 1rem; }
+.pid-code summary, #tuning-reveal summary { cursor: pointer; font-weight: bold; }
+.pid-code pre { max-width: 100%; overflow: auto; padding: 1rem; background: var(--paper); border: 1px solid var(--rule); }
+.pid-score { width: 100%; border-collapse: collapse; font-size: .86rem; }
+.pid-score th, .pid-score td { padding: .45rem .25rem; text-align: left; border-bottom: 1px solid var(--rule); }
+.pid-score td[data-pass="true"] { color: var(--green); font-weight: bold; }
+.pid-score td[data-pass="false"] { color: var(--red); font-weight: bold; }

@@ -3,6 +3,10 @@ function stepResponse(t, K, A, tau) {
   return K * A * (1 - Math.exp(-t / tau));
 }
 
+function randomFirstOrderPlant(random = Math.random) {
+  return { k: 0.6 + random() * 1.9, tau: 0.4 + random() * 3.6 };
+}
+
 function rampResponse(t, K, R, tau) {
   return K * R * (t - tau * (1 - Math.exp(-t / tau)));
 }
@@ -416,7 +420,7 @@ update3();
     const first = Math.random() < 0.5;
     const sensor = first
       ? {order: 1, signal: Math.random() < 0.4 ? 'sine' : 'step',
-         k: randomBetween(0.6, 2.5), tau: randomBetween(0.4, 4), omega: randomBetween(0.4, 1.2)}
+         ...randomFirstOrderPlant(), omega: randomBetween(0.4, 1.2)}
       : {order: 2, signal: 'step', zeta: randomBetween(0.2, 0.7), wn: randomBetween(1, 5)};
     // Coarse time windows keep the curve readable without revealing an exact parameter.
     const usefulWindow = first ? 6 * sensor.tau

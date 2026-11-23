@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="control.css">
   <script src="script.js" defer></script>
   <script src="control.js" defer></script>
+  <script src="digital-pid.js" defer></script>
 </head>
 <body>
   <a class="skip" href="#experiment">Skip to experiment</a>
@@ -324,10 +325,69 @@
       </div>
     </div>
   </section>
+  <section id="p3" aria-labelledby="digital-title">
+    <h3 id="digital-title">P3 · Digital PID</h3>
+    <div class="experiment">
+      <aside class="controls">
+        <p class="control-note">First-order plant: τ · dy/dt + y = K · u. The controller samples y every Ts and holds its command between samples.</p>
+        <div id="digital-settings"></div>
+        <div class="control pid-toggle"><label for="digital-aw"><input type="checkbox" id="digital-aw"> Anti-windup</label></div>
+        <button class="reset" id="digital-reset" type="button">Reset experiment</button>
+        <label for="digital-prediction"><strong>Predict, then check</strong><br>Will a larger Ts make the command change more or less often? At the default gains, does anti-windup bring the output back faster after saturation?</label>
+        <textarea id="digital-prediction" rows="3" placeholder="Write your prediction, then compare the plots."></textarea>
+      </aside>
+      <div class="response-panel">
+        <div class="legend"><span class="input-line">Setpoint / command limits</span><span class="output-line">Current sampling time</span><span class="ideal-line">10 ms reference at the same settings</span></div>
+        <svg id="digital-response" role="img" aria-label="Sampled PID output compared with a 10 ms reference"></svg>
+        <svg id="digital-command" role="img" aria-label="Stair-step held command and saturation limits"></svg>
+        <p id="digital-metrics" class="plot-caption" aria-live="polite"></p>
+        <details class="pid-code">
+          <summary>Arduino loop for these settings</summary>
+          <p>The sketch runs the same simulated plant and prints the measurements to Serial. Hardware use requires replacing the simulated plant with the actual sensor and actuator.</p>
+          <button class="reset" type="button" id="digital-copy">Copy Arduino code</button>
+          <span id="digital-copy-status" role="status"></span>
+          <pre tabindex="0"><code id="digital-code"></code></pre>
+        </details>
+      </div>
+    </div>
+  </section>
+  <section id="p4" aria-labelledby="tuning-title">
+    <h3 id="tuning-title">P4 · Tuning challenge</h3>
+    <div class="experiment">
+      <aside class="controls">
+        <p id="tuning-round" class="control-note"></p>
+        <p class="control-note">Tune the gains for a unit setpoint. Use the open-loop response to a unit command as a clue. The plant stays the same until you ask for another round.</p>
+        <form id="tuning-form">
+          <div id="tuning-settings"></div>
+          <label for="tuning-prediction"><strong>Predict, then check</strong><br>Which gain will you change first to remove a persistent tracking error?</label>
+          <textarea id="tuning-prediction" rows="3" placeholder="Write a prediction, then test your gains."></textarea>
+          <button class="reset" type="submit">Check gains</button>
+        </form>
+        <button class="reset" id="tuning-new" type="button">New plant</button>
+      </aside>
+      <div class="response-panel">
+        <div class="legend"><span class="input-line">Setpoint</span><span class="output-line">Your closed-loop response</span><span class="ideal-line">Open-loop probe</span></div>
+        <svg id="tuning-response" role="img" aria-label="Open-loop probe and closed-loop tuning response"></svg>
+        <table class="pid-score"><caption class="sr-only">Tuning challenge specifications and results</caption>
+          <thead><tr><th scope="col">Specification</th><th scope="col">Measured</th><th scope="col">Result</th></tr></thead>
+          <tbody id="tuning-results">
+            <tr><th scope="row">Overshoot ≤ 10%</th><td>—</td><td>—</td></tr>
+            <tr><th scope="row">Settling (±2%) ≤ 6 s</th><td>—</td><td>—</td></tr>
+            <tr><th scope="row">Tracking error ≤ 1% over final second</th><td>—</td><td>—</td></tr>
+          </tbody>
+        </table>
+        <p id="tuning-score" class="plot-caption" role="status"></p>
+        <details id="tuning-reveal" hidden>
+          <summary>Reveal plant and tuning hint</summary>
+          <p id="tuning-model"></p>
+        </details>
+      </div>
+    </div>
+  </section>
 </section>
 
     </main>
-    <footer><span>THE SENSOR LAB <b>/</b> INTERFACING TECHNIQUES</span><span>MODULES 01–04 · ENCS4380 HOMEWORK 1</span></footer>
+    <footer><span>THE SENSOR LAB <b>/</b> INTERFACING TECHNIQUES</span><span>ENCS4380 HOMEWORK 1 &amp; 2</span></footer>
   </div>
 </body>
 </html>

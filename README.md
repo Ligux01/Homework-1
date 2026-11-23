@@ -55,7 +55,7 @@ The page shows each check with the expected value, our value and pass or fail.
 
 ## How it is built
 
-Plain HTML, CSS and JavaScript. No libraries, no build step, no server. The plots are SVG drawn by `script.js` from the closed-form responses in the lecture slides. Nothing is simulated numerically, except that the second-order metrics are read off the curve by scanning it.
+Plain HTML, CSS and JavaScript. No libraries, build step or server. Homework 1 uses closed-form responses from the lecture slides. The Control section uses explicit Euler integration for the plant and renders its plots as SVG.
 
 - `index.html` holds the page structure and every control.
 - `style.css` holds the layout and the look.
@@ -67,19 +67,21 @@ To run it locally, open `index.html` in a browser.
 
 We used Claude (Anthropic) for implementation support on Modules 2 and 3, the original README, and explanations of the JavaScript. We used ChatGPT/Codex (OpenAI) to help integrate and test Module 4, review the scoring and plotting logic, and explain the resulting code. The team reviewed the formulas, interactions and code and must be able to explain them during the demo.
 
-## Homework 2 checkpoint
+## Homework 2 · PID Control Toolkit
 
-Open **Control · HW2** from the landing page. P1 compares first- and second-order plants under PID control and plots the saturated command. P2 shows true output and a delayed sensor reading, then compares with an ideal sensor at the same gains. Both use explicit Euler integration with a 1 ms time step. D acts on the measured output. Metrics use the target as the reference and the displayed simulation window.
+Open **Control · HW2** from the landing page. P1 compares first- and second-order plants under PID control and plots the saturated command. P2 shows true output and a delayed sensor reading, then compares with an ideal sensor at the same gains. P1 and P2 use a 1 ms Euler step and derivative on measurement.
 
 | Module | Owner |
 |---|---|
 | P1 PID playground | Yazan Salhi |
-| P2 Slow sensor | Ahmad Hamad |
+| P2 Slow sensor | Yazan Salhi |
 | P3 Digital PID | Mohammad Samer |
-| P4 Tuning challenge | Mohammad Shtayeh |
-
-All four team members contributed to P1 and P2.
+| P4 Tuning challenge | Mohammad Samer |
 
 At the P1 defaults (K = 1, tau = 1 s, Kp = 9, Ki = Kd = 0), the output approaches 0.9 with a 0.1 s time constant. Raise P2 sensor lag from 0.05 s to 1 s to see oscillation at its default gains.
 
-AI use for HW2: ChatGPT/Codex helped implement, integrate and numerically check the checkpoint simulations and plots.
+**P3 · Digital PID.** Change Ts and compare the output and held command against a 10 ms reference at the same gains. The controller sums error samples multiplied by Ts, uses a backward difference for D, and holds its limited command until the next sample. With anti-windup enabled, the integrator skips updates that push the command farther into saturation. The copyable Arduino sketch runs the same first-order example using a timer based on `micros()`. The plant settings can be replaced with measured K and τ for a first-order model.
+
+**P4 · Tuning challenge.** Each round uses the random first-order model from Homework 1's guessing activity. The open-loop step response offers a clue about the hidden plant. Each attempt earns one point for each spec met: at most 10% overshoot, settling into the ±2% band by 6 s, and at most 1% tracking error throughout the final second. The simulation lasts 12 s and uses 10 ms samples with anti-windup. Use `Check gains` to try again on the same plant, or select `New plant` for a different round.
+
+AI use for HW2: ChatGPT/Codex helped implement and check the checkpoint simulations and plots and generated and tested the P3/P4 implementation.
